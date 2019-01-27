@@ -1,5 +1,6 @@
 const log4js = require('log4js');
 const fs = require('fs');
+const FileMeta = require('../models/FileMeta');
 
 const logger = log4js.getLogger('fileEventHandler');
 logger.level = 'debug';
@@ -42,16 +43,42 @@ const onFileReadError = (err) => {
 };
 
 module.exports = {
+  // This showed to be useless after I found the upsert option for the 'findOneAndUpdate' method
   handleAdd: (path) => {
     logger.debug(`Handling add for: ${path}`);
     getFileMeta(path).then((meta) => {
       logFileStats(meta);
+
+      const newFile = new FileMeta(meta);
+      newFile.markModified('object');
+
+      logger.debug('Saving new file on mongodb');
+
+      newFile.save((err) => {
+        if (err) {
+          logger.error(err);
+          logger.error('An error occured while saving file meta on mongodb');
+        } else {
+          logger.info(`Successfuly saved file ${path} on Mongodb`);
+        }
+      });
     }).catch(onFileReadError);
   },
   handleChange: (path) => {
     logger.debug(`Handling change for: ${path}`);
     getFileMeta(path).then((meta) => {
       logFileStats(meta);
+      FileMeta.findOneAndUpdate({ name: meta.name },
+        meta,
+        { upsert: true },
+        (err) => {
+          if (err) {
+            logger.error(err);
+            logger.error('An error occured while saving file meta on mongodb');
+          } else {
+            logger.info(`Successfuly updated file ${path} on Mongodb`);
+          }
+        });
     }).catch(onFileReadError);
   },
   handleUnlink: (path) => {
