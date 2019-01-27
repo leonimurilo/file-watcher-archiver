@@ -29,7 +29,7 @@ const getFileMeta = path => new Promise((resolve, reject) => {
         name: path.replace(/^.*[\\/]/, ''),
         path,
         creationDate: stats.ctime,
-        modificationDate: stats.ctime,
+        modificationDate: stats.mtime,
         size: stats.size,
       });
     }
