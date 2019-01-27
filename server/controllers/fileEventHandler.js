@@ -18,7 +18,13 @@ const logFileStats = (meta) => {
   logger.info('=======================================================================================');
 };
 
-const getFileMeta = path => new Promise((resolve, reject) => {
+const getFileMeta = (path, isUnlink) => new Promise((resolve, reject) => {
+  if (isUnlink) {
+    return resolve({
+      name: path.replace(/^.*[\\/]/, ''),
+      path,
+    });
+  }
   fs.stat(path, (err, stats) => {
     if (err) {
       logger.error(`Error occured while reading stats for file: ${path}`);
@@ -69,6 +75,7 @@ module.exports = {
     logger.debug(`Handling change for: ${path}`);
     getFileMeta(path).then((meta) => {
       logFileStats(meta);
+
       FileMeta.findOneAndUpdate({ name: meta.name },
         meta,
         { upsert: true },
@@ -84,8 +91,19 @@ module.exports = {
   },
   handleUnlink: (path) => {
     logger.debug(`Handling unlink for: ${path}`);
-    getFileMeta(path).then((meta) => {
+    getFileMeta(path, true).then((meta) => {
       logFileStats(meta);
+
+      FileMeta.findOneAndDelete({ name: meta.name },
+        meta,
+        (err) => {
+          if (err) {
+            logger.error(err);
+            logger.error('An error occured while deleting file meta from mongodb');
+          } else {
+            logger.info(`Successfuly deleted file ${path} on Mongodb`);
+          }
+        });
     }).catch(onFileReadError);
   }
 };
