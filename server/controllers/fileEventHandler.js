@@ -76,7 +76,7 @@ module.exports = {
     getFileMeta(path).then((meta) => {
       logFileStats(meta);
 
-      FileMeta.findOneAndUpdate({ name: meta.name },
+      FileMeta.findOneAndUpdate({ path: meta.path },
         meta,
         { upsert: true },
         (err) => {
@@ -94,7 +94,7 @@ module.exports = {
     getFileMeta(path, true).then((meta) => {
       logFileStats(meta);
 
-      FileMeta.findOneAndDelete({ name: meta.name },
+      FileMeta.findOneAndDelete({ path: meta.path },
         meta,
         (err) => {
           if (err) {
