@@ -21,7 +21,6 @@ const getFileMeta = path => new Promise((resolve, reject) => {
   fs.stat(path, (err, stats) => {
     if (err) {
       logger.error(`Error occured while reading stats for file: ${path}`);
-      logger.error(err);
       reject(err);
     }
 
@@ -34,27 +33,31 @@ const getFileMeta = path => new Promise((resolve, reject) => {
         size: stats.size,
       });
     }
-    reject(new Error('test'));
+    reject(new Error('Not a file.'));
   });
 });
+
+const onFileReadError = (err) => {
+  logger.error(err);
+};
 
 module.exports = {
   handleAdd: (path) => {
     logger.debug(`Handling add for: ${path}`);
     getFileMeta(path).then((meta) => {
       logFileStats(meta);
-    });
+    }).catch(onFileReadError);
   },
   handleChange: (path) => {
     logger.debug(`Handling change for: ${path}`);
     getFileMeta(path).then((meta) => {
       logFileStats(meta);
-    });
+    }).catch(onFileReadError);
   },
   handleUnlink: (path) => {
     logger.debug(`Handling unlink for: ${path}`);
     getFileMeta(path).then((meta) => {
       logFileStats(meta);
-    });
+    }).catch(onFileReadError);
   }
 };
