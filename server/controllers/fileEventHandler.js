@@ -10,10 +10,10 @@ const logFileStats = (meta) => {
   // ctime: creation time
   logger.info('=======================================================================================');
   logger.info(`Path: ${meta.path}`);
-  logger.info(`Name: ${meta.name}`);
-  logger.info(`Creation datetime: ${meta.creationDate}`);
-  logger.info(`Last modification datetime: ${meta.modificationDate}`);
-  logger.info(`Size in bytes: ${meta.size}`);
+  logger.debug(`Name: ${meta.name}`);
+  logger.debug(`Creation datetime: ${meta.creationDate}`);
+  logger.debug(`Last modification datetime: ${meta.modificationDate}`);
+  logger.debug(`Size in bytes: ${meta.size}`);
   logger.info('=======================================================================================');
 };
 
