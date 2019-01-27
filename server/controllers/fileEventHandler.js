@@ -127,7 +127,7 @@ module.exports = {
     const d = new Date();
     d.setDate(d.getDate() - days);
 
-    FileMeta.deleteMany({ $lte: d },
+    FileMeta.updateMany({ modificationDate: { $lte: d } },
       { $set: { archived: true } },
       (err) => {
         if (err) {
