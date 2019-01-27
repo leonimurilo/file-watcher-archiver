@@ -121,7 +121,7 @@ module.exports = {
         }
       });
   },
-  archiveOldFiles: (days) => {
+  archiveOldMetas: (days) => {
     logger.debug('Checking for files to archive...');
 
     const d = new Date();
@@ -137,5 +137,31 @@ module.exports = {
           logger.info('Successfuly ran old files archiving files from Mongodb');
         }
       });
-  }
+  },
+  getArchivedMetas: (req, res) => {
+    FileMeta.find({ archived: true }, (err, docs) => {
+      if (err) {
+        logger.error(err);
+        logger.error('An error occured while getting archived files from mongo');
+        res.status(500).send({
+          message: 'An error occured while getting archived files from mongo',
+          status: 500,
+        });
+      }
+      res.status(200).send(docs);
+    });
+  },
+  getActiveMetas: (req, res) => {
+    FileMeta.find({ archived: false }, (err, docs) => {
+      if (err) {
+        logger.error(err);
+        logger.error('An error occured while getting active files from mongo');
+        res.status(500).send({
+          message: 'An error occured while getting active files from mongo',
+          status: 500,
+        });
+      }
+      res.status(200).send(docs);
+    });
+  },
 };

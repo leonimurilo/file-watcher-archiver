@@ -4,8 +4,12 @@ const config = require('config');
 const chokidar = require('chokidar');
 const log4js = require('log4js');
 const mongoose = require('mongoose');
+const express = require('express');
+const morgan = require('morgan');
+const http = require('http');
+const cors = require('cors');
 const { execFile } = require('child_process');
-
+const router = require('./router');
 const fileEventHandler = require('./controllers/fileEventHandler');
 const archiverScheduler = require('./archiverScheduler');
 
@@ -23,7 +27,7 @@ mongoose.connect(mongoURI);
 
 logger.info('Starting archiver job');
 archiverScheduler.startJob(null, () => {
-  fileEventHandler.archiveOldFiles(5);
+  fileEventHandler.archiveOldMetas(5);
 });
 
 // create watcher for the specified directory
@@ -44,3 +48,21 @@ dirWatcher
   .on('add', fileEventHandler.handleChange)
   .on('change', fileEventHandler.handleChange)
   .on('unlink', fileEventHandler.handleUnlink);
+
+/**
+ * Create Express server.
+ */
+const app = express();
+
+// allow cors
+app.use(cors());
+
+app.use(morgan('combined'));
+
+router(app);
+
+// server setup
+const port = process.env.PORT || 9999;
+const server = http.createServer(app);
+server.listen(port);
+console.log('Server listening on:', port);
