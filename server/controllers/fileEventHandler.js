@@ -43,7 +43,8 @@ const onFileReadError = (err) => {
 };
 
 module.exports = {
-  // This showed to be useless after I found the upsert option for the 'findOneAndUpdate' method
+  // handleAdd showed to be useless after I found the upsert option for the 'findOneAndUpdate'
+  // But I wont remove it because it may be useful in the future
   handleAdd: (path) => {
     logger.debug(`Handling add for: ${path}`);
     getFileMeta(path).then((meta) => {
