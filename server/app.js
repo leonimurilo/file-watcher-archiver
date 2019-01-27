@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const { execFile } = require('child_process');
 
 const fileEventHandler = require('./controllers/fileEventHandler');
+const archiverScheduler = require('./archiverScheduler');
 
 const ignoreRegex = /(^|[/\\])\../;
 
@@ -16,12 +17,18 @@ const dirToWatch = config.get('watchDirectory');
 const mongoURI = config.get('mongoURI');
 
 logger.info('Starting app');
-logger.debug('Creating dir watcher');
 
+logger.info('Connecting to mongo');
 mongoose.connect(mongoURI);
+
+logger.info('Starting archiver job');
+archiverScheduler.startJob(null, () => {
+  fileEventHandler.archiveOldFiles(5);
+});
 
 // create watcher for the specified directory
 // Should I ignore vi .swp files?
+logger.debug('Creating dir watcher');
 const dirWatcher = chokidar.watch(dirToWatch, { ignored: ignoreRegex });
 
 // get current files uppon start

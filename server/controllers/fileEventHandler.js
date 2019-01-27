@@ -120,5 +120,22 @@ module.exports = {
           logger.info('Successfuly deleted gone files from Mongodb');
         }
       });
+  },
+  archiveOldFiles: (days) => {
+    logger.debug('Checking for files to archive...');
+
+    const d = new Date();
+    d.setDate(d.getDate() - days);
+
+    FileMeta.deleteMany({ $lte: d },
+      { $set: { archived: true } },
+      (err) => {
+        if (err) {
+          logger.error(err);
+          logger.error('An error occured while archiving old files metas from mongodb');
+        } else {
+          logger.info('Successfuly ran old files archiving files from Mongodb');
+        }
+      });
   }
 };
