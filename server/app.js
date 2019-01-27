@@ -1,15 +1,17 @@
 process.env.NODE_CONFIG_DIR = 'server/config';
 
-const chokidar = require('chokidar');
 const config = require('config');
+const chokidar = require('chokidar');
 const log4js = require('log4js');
+const mongoose = require('mongoose');
 
 const fileEventHandler = require('./controllers/fileEventHandler');
 
 const logger = log4js.getLogger('app');
-logger.level = 'debug';
+logger.level = 'info';
 
 const dirToWatch = config.get('watchDirectory');
+const mongoURI = config.get('mongoURI');
 
 logger.info('Starting app');
 logger.debug('Creating dir watcher');
@@ -23,3 +25,14 @@ dirWatcher
   .on('add', fileEventHandler.handleAdd)
   .on('change', fileEventHandler.handleChange)
   .on('unlink', fileEventHandler.handleUnlink);
+
+mongoose.connect(mongoURI, { useNewUrlParser: true }, (err, db) => {
+  if (err) {
+    logger.error(err);
+    logger.error('%s MongoDB connection error. Please make sure MongoDB is running.');
+    process.exit();
+  } else {
+    logger.info(`Connected to Mongo: ${mongoURI}`);
+    db.close();
+  }
+});

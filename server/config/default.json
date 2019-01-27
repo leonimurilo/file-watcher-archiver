@@ -1,3 +1,4 @@
 {
-  "watchDirectory": "/Users/leonimurilo/Personal projects/my-test-dir"
+  "watchDirectory": "/Users/leonimurilo/Personal projects/my-test-dir",
+  "mongoURI": "mongodb://localhost:27017/file-watcher-archive"
 }
