@@ -5,6 +5,8 @@ This project consists in a set composed by:
   - A mongo db connection that saves on a collection some meta data of a file every single time the file suffers changes on the specified directory (insert, update and delete)
   - A cron based scheduler that checks every N seconds (default is 30sec) if a file is too old (older than 5 days) and update the 'archived' field to true if the file is old
   - Two simple express routes that returns the active files and the archived ones, respectively
+  
+  Tested on a directory with 45k files
 
 # How to run
 1 - Update config/default.json file with:
