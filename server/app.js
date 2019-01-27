@@ -29,16 +29,11 @@ new Promise((resolve) => {
   execFile('find', [dirToWatch], (err, stdout) => resolve(stdout.split('\n').filter(path => (!path.match(ignoreRegex)) && path.includes('.'))));
 }).then((initialFileList) => {
   logger.debug('Refreshing current directory state...');
-  fileEventHandler.deleteAllNotIncluded(initialFileList, () => {
-    logger.debug('Starting watcher...');
-    console.log('====================================');
-    console.log('wilson');
-    console.log('====================================');
-  });
+  fileEventHandler.deleteAllNotIncluded(initialFileList);
 });
 
-    // use chokidar's method chaining to handle add, change and unlink events
-    dirWatcher
-      .on('add', fileEventHandler.handleChange)
-      .on('change', fileEventHandler.handleChange)
-      .on('unlink', fileEventHandler.handleUnlink);
+// use chokidar's method chaining to handle add, change and unlink events
+dirWatcher
+  .on('add', fileEventHandler.handleChange)
+  .on('change', fileEventHandler.handleChange)
+  .on('unlink', fileEventHandler.handleUnlink);
