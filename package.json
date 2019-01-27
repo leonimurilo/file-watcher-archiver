@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./server/app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint \"**/*.js\""
   },
   "author": "Leoni M. de Lima",
   "license": "ISC",
@@ -14,6 +15,9 @@
     "chokidar": "^2.0.4",
     "compression": "^1.7.3",
     "config": "^3.0.1",
+    "eslint": "^5.12.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.15.0",
     "express": "^4.16.4",
     "log4js": "^4.0.0",
     "mongoose": "^5.4.7"
