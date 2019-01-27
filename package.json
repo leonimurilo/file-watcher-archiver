@@ -1,0 +1,20 @@
+{
+  "name": "file-watcher-archive",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Leoni M. de Lima",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "chokidar": "^2.0.4",
+    "compression": "^1.7.3",
+    "config": "^3.0.1",
+    "express": "^4.16.4",
+    "log4js": "^4.0.0",
+    "mongoose": "^5.4.7"
+  }
+}
