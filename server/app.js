@@ -13,6 +13,11 @@ logger.level = 'info';
 const dirToWatch = config.get('watchDirectory');
 const mongoURI = config.get('mongoURI');
 
+// Using mongoose simplified initial connection options
+const mongooseOptions = {
+  useMongoClient: true,
+};
+
 logger.info('Starting app');
 logger.debug('Creating dir watcher');
 
@@ -22,17 +27,8 @@ const dirWatcher = chokidar.watch(dirToWatch);
 
 // // use chokidar's method chaining to handle add, change and unlink events
 dirWatcher
-  .on('add', fileEventHandler.handleAdd)
+  .on('add', fileEventHandler.handleChange)
   .on('change', fileEventHandler.handleChange)
   .on('unlink', fileEventHandler.handleUnlink);
 
-mongoose.connect(mongoURI, { useNewUrlParser: true }, (err, db) => {
-  if (err) {
-    logger.error(err);
-    logger.error('%s MongoDB connection error. Please make sure MongoDB is running.');
-    process.exit();
-  } else {
-    logger.info(`Connected to Mongo: ${mongoURI}`);
-    db.close();
-  }
-});
+mongoose.connect(mongoURI, mongooseOptions);
