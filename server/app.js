@@ -12,9 +12,10 @@ logger.level = 'debug';
 const dirToWatch = config.get('watchDirectory');
 
 logger.info('Starting app');
-
 logger.debug('Creating dir watcher');
+
 // create watcher for the specified directory
+// Should I ignore vi .swp files?
 const dirWatcher = chokidar.watch(dirToWatch);
 
 // // use chokidar's method chaining to handle add, change and unlink events
