@@ -5,6 +5,10 @@ const FileMeta = require('../models/FileMeta');
 const logger = log4js.getLogger('fileEventHandler');
 logger.level = 'debug';
 
+/**
+ * Procedure that logs out the meta of a file
+ * @param {object} meta - The meta gotten from getFileMeta function
+ */
 const logFileStats = (meta) => {
   // atime: last access time
   // mtime: last modification time
@@ -18,6 +22,11 @@ const logFileStats = (meta) => {
   logger.info('=======================================================================================');
 };
 
+/**
+ * Returns the meta of a file (consisting of some metadata)
+ * @param {string} path - The path for the file
+ * @param {boolean} path - Whether is for unlink/deletion purposes or not
+ */
 const getFileMeta = (path, isUnlink) => new Promise((resolve, reject) => {
   if (isUnlink) {
     return resolve({
@@ -71,6 +80,10 @@ module.exports = {
       });
     }).catch(onFileReadError);
   },
+  /**
+   * Update or insert file meta entry (by full path)
+   * @param {string} path - The path for the file
+   */
   handleChange: (path) => {
     logger.debug(`Handling change for: ${path}`);
     getFileMeta(path).then((meta) => {
@@ -79,8 +92,8 @@ module.exports = {
       FileMeta.findOneAndUpdate({ path: meta.path },
         meta,
         {
-          upsert: true,
-          setDefaultsOnInsert: true
+          upsert: true, // inserts if doesn't exist
+          setDefaultsOnInsert: true // always inserts with default fields defined on schema
         },
         (err) => {
           if (err) {
@@ -92,6 +105,10 @@ module.exports = {
         });
     }).catch(onFileReadError);
   },
+  /**
+   * Remove a file meta from the database (by full path)
+   * @param {string} path - The path for the file
+   */
   handleUnlink: (path) => {
     logger.debug(`Handling unlink for: ${path}`);
     getFileMeta(path, true).then((meta) => {
@@ -109,6 +126,10 @@ module.exports = {
         });
     }).catch(onFileReadError);
   },
+  /**
+   * Removes all the files not included in the list
+   * @param {array} list - List of files that won't be deleted
+   */
   deleteAllNotIncluded: (list) => {
     logger.debug('Deleting files not included in array...');
     FileMeta.deleteMany({ path: { $nin: list } },
@@ -121,6 +142,10 @@ module.exports = {
         }
       });
   },
+  /**
+   * given a number o days, archives all files older than the number
+   * @param {number} days - Number of days used as threshold to define what is old
+   */
   archiveOldMetas: (days) => {
     logger.debug('Checking for files to archive...');
 
@@ -138,6 +163,9 @@ module.exports = {
         }
       });
   },
+  /**
+   * gets all archived file metas and send it via express res
+   */
   getArchivedMetas: (req, res) => {
     FileMeta.find({ archived: true }, (err, docs) => {
       if (err) {
@@ -151,6 +179,9 @@ module.exports = {
       res.status(200).send(docs);
     });
   },
+  /**
+   * gets all active file metas and send it via express res
+   */
   getActiveMetas: (req, res) => {
     FileMeta.find({ archived: false }, (err, docs) => {
       if (err) {
