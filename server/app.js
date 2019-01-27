@@ -23,7 +23,7 @@ logger.debug('Creating dir watcher');
 
 // create watcher for the specified directory
 // Should I ignore vi .swp files?
-const dirWatcher = chokidar.watch(dirToWatch);
+const dirWatcher = chokidar.watch(dirToWatch, { ignored: /(^|[/\\])\../ });
 
 // // use chokidar's method chaining to handle add, change and unlink events
 dirWatcher
