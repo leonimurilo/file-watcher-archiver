@@ -34,3 +34,6 @@ You can also see the json files in the mongoDB collection while the changes happ
 There should be two apis available:
 - GET localhost:9999/files/archived
 - GET localhost:9999/files/active
+
+You can use something like Postman or even a web browser to perform the requests
+
