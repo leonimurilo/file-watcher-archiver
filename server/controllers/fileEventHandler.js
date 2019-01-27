@@ -78,13 +78,16 @@ module.exports = {
 
       FileMeta.findOneAndUpdate({ path: meta.path },
         meta,
-        { upsert: true },
+        {
+          upsert: true,
+          setDefaultsOnInsert: true
+        },
         (err) => {
           if (err) {
             logger.error(err);
-            logger.error('An error occured while saving file meta on mongodb');
+            logger.error('An error occured while upserting file meta on mongodb');
           } else {
-            logger.info(`Successfuly updated file ${path} on Mongodb`);
+            logger.info(`Successfuly upserted file ${path} on Mongodb`);
           }
         });
     }).catch(onFileReadError);
@@ -106,18 +109,16 @@ module.exports = {
         });
     }).catch(onFileReadError);
   },
-  deleteAllNotIncluded: list => new Promise((resolve, reject) => {
+  deleteAllNotIncluded: (list) => {
     logger.debug('Deleting files not included in array...');
     FileMeta.deleteMany({ path: { $nin: list } },
       (err) => {
         if (err) {
           logger.error(err);
           logger.error('An error occured while deleting gone files metas from mongodb');
-          reject(err);
         } else {
           logger.info('Successfuly deleted gone files from Mongodb');
-          resolve();
         }
       });
-  })
+  }
 };

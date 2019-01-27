@@ -11,7 +11,6 @@ const fileEventHandler = require('./controllers/fileEventHandler');
 const ignoreRegex = /(^|[/\\])\../;
 
 const logger = log4js.getLogger('app');
-logger.level = 'info';
 
 const dirToWatch = config.get('watchDirectory');
 const mongoURI = config.get('mongoURI');
@@ -23,20 +22,23 @@ mongoose.connect(mongoURI);
 
 // create watcher for the specified directory
 // Should I ignore vi .swp files?
-const dirWatcher = chokidar.watch(dirToWatch, { ignoreInitial: true, ignored: ignoreRegex });
+const dirWatcher = chokidar.watch(dirToWatch, { ignored: ignoreRegex });
 
 // get current files uppon start
 new Promise((resolve) => {
   execFile('find', [dirToWatch], (err, stdout) => resolve(stdout.split('\n').filter(path => (!path.match(ignoreRegex)) && path.includes('.'))));
 }).then((initialFileList) => {
   logger.debug('Refreshing current directory state...');
-  fileEventHandler.deleteAllNotIncluded(initialFileList).then(() => {
+  fileEventHandler.deleteAllNotIncluded(initialFileList, () => {
     logger.debug('Starting watcher...');
+    console.log('====================================');
+    console.log('wilson');
+    console.log('====================================');
+  });
+});
 
     // use chokidar's method chaining to handle add, change and unlink events
     dirWatcher
       .on('add', fileEventHandler.handleChange)
       .on('change', fileEventHandler.handleChange)
       .on('unlink', fileEventHandler.handleUnlink);
-  });
-});
