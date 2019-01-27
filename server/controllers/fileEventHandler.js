@@ -101,9 +101,23 @@ module.exports = {
             logger.error(err);
             logger.error('An error occured while deleting file meta from mongodb');
           } else {
-            logger.info(`Successfuly deleted file ${path} on Mongodb`);
+            logger.info(`Successfuly deleted file ${path} from Mongodb`);
           }
         });
     }).catch(onFileReadError);
-  }
+  },
+  deleteAllNotIncluded: list => new Promise((resolve, reject) => {
+    logger.debug('Deleting files not included in array...');
+    FileMeta.deleteMany({ path: { $nin: list } },
+      (err) => {
+        if (err) {
+          logger.error(err);
+          logger.error('An error occured while deleting gone files metas from mongodb');
+          reject(err);
+        } else {
+          logger.info('Successfuly deleted gone files from Mongodb');
+          resolve();
+        }
+      });
+  })
 };
