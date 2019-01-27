@@ -41,6 +41,9 @@ const getFileMeta = path => new Promise((resolve, reject) => {
 module.exports = {
   handleAdd: (path) => {
     logger.debug(`Handling add for: ${path}`);
+    getFileMeta(path).then((meta) => {
+      logFileStats(meta);
+    });
   },
   handleChange: (path) => {
     logger.debug(`Handling change for: ${path}`);
@@ -50,5 +53,8 @@ module.exports = {
   },
   handleUnlink: (path) => {
     logger.debug(`Handling unlink for: ${path}`);
+    getFileMeta(path).then((meta) => {
+      logFileStats(meta);
+    });
   }
 };
