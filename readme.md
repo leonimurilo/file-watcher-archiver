@@ -7,6 +7,10 @@ This project consists in a set composed by:
   - Two simple express routes that returns the active files and the archived ones, respectively
   
   Tested on a directory with 45k files
+  
+# todo:
+- queue events to bulk them on mongo
+  
 
 # How to run
 1 - Update config/default.json file with:
